@@ -2,16 +2,16 @@
 
 A modern, responsive dashboard for strategic planning and project management built with Next.js, TailwindCSS, and Shadcn UI.
 
-## ✨ Features
+## Features
 
-- **📊 Strategic Issues Management** - จัดการประเด็นยุทธศาสตร์ขององค์กร
-- **🎯 Strategy Tracking** - ติดตามกลยุทธ์และแผนงาน
-- **📁 Project Management** - จัดการโครงการและความก้าวหน้า
-- **👥 User Management** - จัดการผู้ใช้งานในระบบ
-- **📱 Responsive Design** - ใช้งานได้ทุกอุปกรณ์
-- **🎨 Modern UI** - ออกแบบด้วย Clean และ Minimal aesthetic
+- **Strategic Issues Management** - จัดการประเด็นยุทธศาสตร์ขององค์กร
+- **Strategy Tracking** - ติดตามกลยุทธ์และแผนงาน
+- **Project Management** - จัดการโครงการและความก้าวหน้า
+- **User Management** - จัดการผู้ใช้งานในระบบ
+- **Responsive Design** - ใช้งานได้ทุกอุปกรณ์
+- **Modern UI** - ออกแบบด้วย Clean และ Minimal aesthetic
 
-## 🚀 Technology Stack
+## Technology Stack
 
 - **Frontend**: Next.js 15.3.5
 - **Styling**: TailwindCSS 4.1.11
@@ -20,7 +20,7 @@ A modern, responsive dashboard for strategic planning and project management bui
 - **Font**: Geist Sans
 - **Language**: TypeScript
 
-## 📦 Installation
+## Installation
 
 1. Clone the repository:
 ```bash
@@ -40,7 +40,7 @@ npm run dev
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 src/
@@ -70,7 +70,7 @@ src/
     └── mock-data.ts             # Mock data for development
 ```
 
-## 🎨 Design System
+## Design System
 
 ### Colors
 - **Primary**: Blue gradient (#3B82F6 to #8B5CF6)
@@ -90,7 +90,7 @@ src/
 - **Hover states**: Smooth transitions (300ms)
 - **Glass morphism**: Backdrop blur effects
 
-## 📊 Data Structure
+## Data Structure
 
 ### Strategic Issues (ประเด็นยุทธศาสตร์)
 ```typescript
@@ -126,7 +126,7 @@ interface Project {
 }
 ```
 
-## 🔧 Development
+## Development
 
 ### Adding New Components
 1. Create component in `src/components/`
@@ -144,13 +144,13 @@ npx shadcn@latest add [component-name]
 ### Mock Data
 All data is currently mocked in `src/lib/mock-data.ts`. In a real application, this would be replaced with API calls to a backend service.
 
-## 📱 Responsive Design
+## Responsive Design
 
 - **Mobile**: Full-width layout with collapsible sidebar
 - **Tablet**: Balanced layout with side navigation
 - **Desktop**: Full sidebar with main content area
 
-## 🎯 Future Enhancements
+## Future Enhancements
 
 - [ ] Real-time data updates
 - [ ] Advanced filtering and search
@@ -162,7 +162,7 @@ All data is currently mocked in `src/lib/mock-data.ts`. In a real application, t
 - [ ] User authentication
 - [ ] Role-based permissions
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -170,13 +170,9 @@ All data is currently mocked in `src/lib/mock-data.ts`. In a real application, t
 4. Test thoroughly
 5. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
-
-## 📞 Support
-
-For support, email support@ypr-dashboard.com or create an issue in the GitHub repository.
 
 ---
 
