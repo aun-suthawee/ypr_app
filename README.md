@@ -408,11 +408,6 @@ npx shadcn@latest add [component-name]
 ### In Progress
 - Project form component (temporarily disabled)
 - Enhanced filtering and search
-- Data export functionality
-
-### Known Issues
-- Project form component disabled due to build issues
-- Some prerender errors during static export
 
 ## Future Enhancements
 
