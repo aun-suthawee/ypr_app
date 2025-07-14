@@ -2,6 +2,34 @@
 
 A modern, responsive dashboard for strategic planning and project management built with Next.js, TailwindCSS, and Shadcn UI.
 
+## Screenshots
+
+### Homepage & Welcome
+![Homepage Overview 1](./docs/images/homepage-1.png)
+*Welcome page with modern design and navigation*
+
+![Homepage Overview 2](./docs/images/homepage-2.png)
+*Homepage layout showing system introduction*
+
+### Dashboard & Management
+
+![Dashboard Homepage](./docs/images/dashboard-homepage.png)
+*Main dashboard showing overview of strategic planning system*
+
+![Strategic Issues Management](./docs/images/dashboard-strategie-issues.png)
+*Strategic issues management interface with comprehensive data view*
+
+![Strategies Management](./docs/images/dashboard-strategies.png)
+*Strategies tracking and management dashboard*
+
+![Project Management](./docs/images/dashboard-projects.png)
+*Project management interface with filtering and CRUD operations*
+
+![User Management](./docs/images/dashboard-users.png)
+*User management system with role-based access control*
+
+> **Note**: These screenshots represent the current state of the application. The interface may continue to evolve as new features are added.
+
 ## Features
 
 - **Strategic Issues Management** - จัดการประเด็นยุทธศาสตร์ขององค์กร
@@ -442,6 +470,59 @@ npx shadcn@latest add [component-name]
 - Include loading states for async operations
 - Write responsive CSS with mobile-first approach
 - Document complex logic with comments
+
+### Adding Images to Documentation
+
+#### Method 1: Store in Repository (Recommended for small images)
+1. Create a `docs/images/` directory in your project root
+2. Add your images to this folder
+3. Reference them in markdown:
+```markdown
+![Alt text](./docs/images/your-image.png)
+```
+
+#### Method 2: Use GitHub Issues (Free hosting)
+1. Create a new issue in your GitHub repository
+2. Drag and drop your image into the issue description
+3. GitHub will generate a URL like: `https://user-images.githubusercontent.com/...`
+4. Copy this URL and use it in your README:
+```markdown
+![Alt text](https://user-images.githubusercontent.com/your-generated-url)
+```
+
+#### Method 3: External Image Hosting
+- **Imgur**: Upload to imgur.com and use direct link
+- **Cloudinary**: For advanced image management
+- **GitHub Pages**: Host images on gh-pages branch
+
+#### Method 4: Relative Path (if images are in public folder)
+```markdown
+![Dashboard](./public/screenshots/dashboard.png)
+```
+
+#### Best Practices for README Images
+- Use descriptive alt text for accessibility
+- Compress images to reduce file size (use tools like TinyPNG)
+- Use consistent image sizes (recommended: 800-1200px width)
+- Consider using GIFs for demonstrating features
+- Add captions for better context
+
+#### Example Image Section
+```markdown
+## Screenshots
+
+### Dashboard Overview
+![Dashboard Homepage](./docs/images/dashboard-home.png)
+*Main dashboard showing strategic issues and project overview*
+
+### Strategic Issues Management
+![Strategic Issues](./docs/images/strategic-issues.png)
+*Interface for managing organizational strategic issues*
+
+### Project Management
+![Projects View](./docs/images/projects.png)
+*Project listing with filtering and search capabilities*
+```
 
 ## Deployment
 
