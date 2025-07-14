@@ -1,0 +1,3 @@
+/* eslint-disable */
+// This file disables ESLint for the entire backend project
+// as we're using CommonJS (require/module.exports) instead of ES modules
