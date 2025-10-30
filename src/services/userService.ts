@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { http } from '@/lib/http';
 import { 
   User, 
   UserFilters, 
@@ -10,54 +10,13 @@ import {
   ChangePasswordRequest
 } from '@/types/user';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-
-const api = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request interceptor to add auth token
-api.interceptors.request.use(
-  (config) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('ypr_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor to handle errors
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('ypr_token');
-        localStorage.removeItem('ypr_user');
-        // Don't auto-redirect to login - let components handle 401 errors
-        // Components can decide whether to redirect or show limited data
-        // window.location.href = '/login';
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+// Note: shared http instance handles auth header and URL prefix
 
 export const userService = {
   // Get all users with filters
   async getUsers(filters?: UserFilters): Promise<UsersResponse> {
     try {
-      const response = await api.get('/users', { params: filters });
+  const response = await http.get('/users', { params: filters });
       return response.data;
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -68,7 +27,7 @@ export const userService = {
   // Get user by ID
   async getUserById(id: string): Promise<UserResponse> {
     try {
-      const response = await api.get(`/users/${id}`);
+  const response = await http.get(`/users/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -79,7 +38,7 @@ export const userService = {
   // Create new user
   async createUser(userData: CreateUserRequest): Promise<UserResponse> {
     try {
-      const response = await api.post('/users', userData);
+  const response = await http.post('/users', userData);
       return response.data;
     } catch (error) {
       console.error('Error creating user:', error);
@@ -90,7 +49,7 @@ export const userService = {
   // Update user
   async updateUser(id: string, userData: UpdateUserRequest): Promise<UserResponse> {
     try {
-      const response = await api.put(`/users/${id}`, userData);
+  const response = await http.put(`/users/${id}`, userData);
       return response.data;
     } catch (error) {
       console.error('Error updating user:', error);
@@ -101,7 +60,7 @@ export const userService = {
   // Delete user
   async deleteUser(id: string): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.delete(`/users/${id}`);
+  const response = await http.delete(`/users/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -112,7 +71,7 @@ export const userService = {
   // Activate user
   async activateUser(id: string): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.put(`/users/${id}/activate`);
+  const response = await http.put(`/users/${id}/activate`);
       return response.data;
     } catch (error) {
       console.error('Error activating user:', error);
@@ -123,7 +82,7 @@ export const userService = {
   // Deactivate user
   async deactivateUser(id: string): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.put(`/users/${id}/deactivate`);
+  const response = await http.put(`/users/${id}/deactivate`);
       return response.data;
     } catch (error) {
       console.error('Error deactivating user:', error);
@@ -134,7 +93,7 @@ export const userService = {
   // Change password
   async changePassword(id: string, passwordData: ChangePasswordRequest): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.put(`/users/${id}/change-password`, passwordData);
+  const response = await http.put(`/users/${id}/change-password`, passwordData);
       return response.data;
     } catch (error) {
       console.error('Error changing password:', error);
@@ -145,7 +104,7 @@ export const userService = {
   // Get user statistics
   async getUserStats(): Promise<UserStatsResponse> {
     try {
-      const response = await api.get('/users/stats');
+  const response = await http.get('/users/stats');
       return response.data;
     } catch (error) {
       console.error('Error fetching user stats:', error);

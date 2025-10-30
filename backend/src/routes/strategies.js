@@ -63,14 +63,7 @@ const handleValidationErrors = (req, res, next) => {
 
 // Routes
 
-// Handle preflight requests
-router.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || 'http://localhost:3000');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(200);
-});
+// Preflight requests are handled by the global CORS middleware in server.js
 
 // Public routes (ไม่ต้อง authentication)
 // GET /api/strategies/public - ดึงกลยุทธ์ทั้งหมดแบบ public

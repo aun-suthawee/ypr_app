@@ -69,7 +69,7 @@ export function MultiSelect({
       >
         <div className="flex flex-wrap gap-1">
           {selectedOptions.length === 0 ? (
-            <span className="text-muted-foreground">
+            <span className="text-slate-500 font-medium">
               {loading ? "กำลังโหลด..." : placeholder}
             </span>
           ) : (
@@ -115,24 +115,24 @@ export function MultiSelect({
       </Button>
       
       {open && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-md max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-2 bg-white border-2 border-slate-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
           <div className="p-2 border-b">
             <input
               type="text"
               placeholder="ค้นหา..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border-2 border-slate-300 bg-white text-slate-900 placeholder:text-slate-500 rounded focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
             />
           </div>
           <div className="p-1">
             {filteredOptions.length === 0 ? (
-              <div className="px-2 py-1 text-sm text-gray-500">ไม่พบรายการ</div>
+              <div className="px-3 py-2 text-sm text-slate-500">ไม่พบรายการ</div>
             ) : (
               filteredOptions.map((option) => (
                 <div
                   key={option.value}
-                  className="flex items-center space-x-2 px-2 py-1 hover:bg-gray-100 cursor-pointer"
+                  className="flex items-center space-x-2 px-3 py-2 hover:bg-blue-50 cursor-pointer text-slate-900 transition-colors duration-150"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

@@ -1,3 +1,5 @@
+import { makeApiUrl } from '@/lib/config';
+import { setTokenGetter } from '@/lib/http';
 // Authentication utilities for YPR Dashboard
 
 export interface User {
@@ -99,7 +101,8 @@ export const apiCall = async (
     ...options.headers,
   };
 
-  const response = await fetch(`http://localhost:5000${endpoint}`, {
+  const url = /^https?:\/\//i.test(endpoint) ? endpoint : makeApiUrl(endpoint);
+  const response = await fetch(url, {
     ...options,
     headers,
     mode: 'cors',
@@ -122,7 +125,8 @@ export const apiCall = async (
 
 // Login function
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
-  const response = await fetch('http://localhost:5000/api/auth/login', {
+  const url = makeApiUrl('/auth/login');
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -146,7 +150,7 @@ export const logout = async (): Promise<void> => {
   try {
     const token = getToken();
     if (token) {
-      await apiCall('/api/auth/logout', { method: 'POST' });
+      await apiCall('/auth/logout', { method: 'POST' });
     }
   } catch (error) {
     console.error('Logout error:', error);
@@ -161,10 +165,15 @@ export const logout = async (): Promise<void> => {
 // Verify token validity
 export const verifyToken = async (): Promise<boolean> => {
   try {
-    const response = await apiCall('/api/auth/verify');
+    const response = await apiCall('/auth/verify');
     return response.ok;
   } catch (error) {
     console.error('Token verification error:', error);
     return false;
   }
 };
+
+// Provide token getter to the shared http instance when in the browser
+if (typeof window !== 'undefined') {
+  setTokenGetter(() => getToken());
+}

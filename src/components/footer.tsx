@@ -1,4 +1,5 @@
 import { Target, Mail, Phone } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -12,11 +13,11 @@ export default function Footer() {
                 <Target className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-slate-900">
-                YPR Dashboard
+                ระบบจัดการด้านการศึกษาจังหวัดยะลา
               </h3>
             </div>
             <p className="text-sm text-slate-600">
-              ระบบจัดการยุทธศาสตร์ที่ช่วยให้องค์กรติดตามและวิเคราะห์ความก้าวหน้าของโครงการได้อย่างมีประสิทธิภาพ
+              ระบบจัดการด้านการศึกษาจังหวัดยะลา - แพลตฟอร์มสำหรับจัดการโครงการ ประเด็นยุทธศาสตร์ และสถิติการศึกษา
             </p>
           </div>
 
@@ -49,12 +50,12 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="/dashboard/projects"
+                <Link
+                  href="/projects"
                   className="text-slate-600 hover:text-blue-600 transition-colors"
                 >
                   โครงการ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

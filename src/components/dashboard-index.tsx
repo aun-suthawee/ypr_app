@@ -15,6 +15,7 @@ import {
   ProjectsLoadingSkeleton 
 } from "@/components/loading-skeleton";
 import { NavigationLoading } from "@/components/redirect-loading";
+import ProjectFilter, { ProjectFilters } from "@/components/project-filter";
 import { useUserStats } from "@/hooks/useUsers";
 import { useProjects, useProjectStats } from "@/hooks/useProjects";
 import { useStrategicIssues } from "@/hooks/useStrategicIssues";
@@ -45,13 +46,13 @@ interface ProjectCardProps {
 function ProjectCard({ project, strategicIssues = [], strategies = [], onNavigate }: ProjectCardProps) {
   const handleClick = () => {
     if (onNavigate) {
-      onNavigate(`/dashboard/projects/${project.id}`);
+      onNavigate(`/projects/${project.id}`);
     }
   };
 
   return (
     <div onClick={handleClick} className="block cursor-pointer">
-      <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white/80 backdrop-blur-sm">
+  <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-white/80 backdrop-blur-sm overflow-hidden">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <CardTitle className="text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
@@ -59,7 +60,7 @@ function ProjectCard({ project, strategicIssues = [], strategies = [], onNavigat
             </CardTitle>
             <StatusBadge status={project.status} />
           </div>
-          <p className="text-sm text-slate-600 mt-2">{project.key_activities}</p>
+          <p className="text-sm text-slate-700 font-medium mt-2">{project.key_activities}</p>
         </CardHeader>
       <CardContent className="pt-0">
         <div className="space-y-3">
@@ -73,8 +74,8 @@ function ProjectCard({ project, strategicIssues = [], strategies = [], onNavigat
           {((project.strategic_issues_details && project.strategic_issues_details.length > 0) || 
             (project.strategic_issues && project.strategic_issues.length > 0)) && (
             <div className="pt-2">
-              <p className="text-xs text-slate-500 mb-1">ประเด็นยุทธศาสตร์:</p>
-              <div className="flex flex-wrap gap-1">
+              <p className="text-sm text-slate-700 font-semibold mb-2">ประเด็นยุทธศาสตร์:</p>
+              <div className="flex flex-wrap gap-1 overflow-hidden">
                 {project.strategic_issues_details && project.strategic_issues_details.length > 0 ? (
                   <>
                     {project.strategic_issues_details.slice(0, 2).map((issue, index) => (
@@ -125,8 +126,8 @@ function ProjectCard({ project, strategicIssues = [], strategies = [], onNavigat
           {((project.strategies_details && project.strategies_details.length > 0) || 
             (project.strategies && project.strategies.length > 0)) && (
             <div className="pt-2">
-              <p className="text-xs text-slate-500 mb-1">กลยุทธ์:</p>
-              <div className="flex flex-wrap gap-1">
+              <p className="text-sm text-slate-700 font-semibold mb-2">กลยุทธ์:</p>
+              <div className="flex flex-wrap gap-1 overflow-hidden">
                 {project.strategies_details && project.strategies_details.length > 0 ? (
                   <>
                     {project.strategies_details.slice(0, 2).map((strategy, index) => (
@@ -191,6 +192,19 @@ export default function DashboardIndex() {
   const [mounted, setMounted] = useState(false);
   const [isDashboardPage, setIsDashboardPage] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+  const [filters, setFilters] = useState<ProjectFilters>({
+    search: '',
+    minBudget: '',
+    maxBudget: '',
+    projectType: '',
+    startDate: '',
+    endDate: '',
+    status: '',
+    districts: [],
+    strategicIssueIds: [],
+    strategyIds: [],
+  });
   const router = useRouter();
   
   // Use real API hooks instead of mock data (with error handling for public access)
@@ -224,6 +238,75 @@ export default function DashboardIndex() {
   const currentUser = mounted ? getUser() : null;
   const isAdmin = mounted && currentUser?.role === 'admin';
   const isAuthenticated = mounted && currentUser !== null;
+
+  // Filter projects based on filters
+  const filterProjects = (projectsToFilter: Project[]): Project[] => {
+    if (!projectsToFilter) return [];
+
+    return projectsToFilter.filter((project) => {
+      // Search filter (name, key_activities, responsible person)
+      if (filters.search) {
+        const searchTerm = filters.search.toLowerCase();
+        const searchFields = [
+          project.name,
+          project.key_activities,
+          `${project.responsible_first_name} ${project.responsible_last_name}`,
+          project.responsible_position,
+        ].join(' ').toLowerCase();
+        
+        if (!searchFields.includes(searchTerm)) return false;
+      }
+
+      // Budget filter
+      if (filters.minBudget && project.budget < parseFloat(filters.minBudget)) return false;
+      if (filters.maxBudget && project.budget > parseFloat(filters.maxBudget)) return false;
+
+      // Project type filter
+      if (filters.projectType && project.project_type !== filters.projectType) return false;
+
+      // Status filter
+      if (filters.status && project.status !== filters.status) return false;
+
+      // Date range filter
+      if (filters.startDate && new Date(project.start_date) < new Date(filters.startDate)) return false;
+      if (filters.endDate && new Date(project.end_date) > new Date(filters.endDate)) return false;
+
+      // Districts filter
+      if (filters.districts.length > 0) {
+        const hasMatchingDistrict = filters.districts.some(district => 
+          project.districts?.includes(district)
+        );
+        if (!hasMatchingDistrict) return false;
+      }
+
+      // Strategic issues filter
+      if (filters.strategicIssueIds.length > 0) {
+        const hasMatchingIssue = filters.strategicIssueIds.some(issueId => 
+          project.strategic_issues?.includes(issueId)
+        );
+        if (!hasMatchingIssue) return false;
+      }
+
+      // Strategies filter
+      if (filters.strategyIds.length > 0) {
+        const hasMatchingStrategy = filters.strategyIds.some(strategyId => 
+          project.strategies?.includes(strategyId)
+        );
+        if (!hasMatchingStrategy) return false;
+      }
+
+      return true;
+    });
+  };
+
+  // Check if filters are active
+  const hasActiveFilters = filters.search || filters.minBudget || filters.maxBudget || 
+                          filters.projectType || filters.startDate || filters.endDate || 
+                          filters.status || filters.districts.length > 0 || 
+                          filters.strategicIssueIds.length > 0 || filters.strategyIds.length > 0;
+
+  // Apply filters to get filtered projects
+  const filteredProjects = filterProjects(projects || []);
 
   // Show loading state during hydration or API loading
   if (!mounted || projectsLoading || statsLoading || strategicIssuesLoading || strategiesLoading) {
@@ -336,15 +419,25 @@ export default function DashboardIndex() {
     return projectStats?.byStatus?.find(s => s.status === status)?.count || 0;
   };
 
-  const stats = {
+  // Calculate stats from filtered data when filters are active
+  const getFilteredStatsByStatus = (status: string) => {
+    return filteredProjects.filter(p => p.status === status).length;
+  };
+
+  const stats = hasActiveFilters ? {
+    totalProjects: filteredProjects.length,
+    activeProjects: getFilteredStatsByStatus('active'),
+    completedProjects: getFilteredStatsByStatus('completed'),
+    planningProjects: getFilteredStatsByStatus('planning'),
+  } : {
     totalProjects: projectStats?.total || projects?.length || 0,
     activeProjects: getStatsByStatus('active') || projects?.filter((p) => p.status === "active").length || 0,
     completedProjects: getStatsByStatus('completed') || projects?.filter((p) => p.status === "completed").length || 0,
     planningProjects: getStatsByStatus('planning') || projects?.filter((p) => p.status === "planning").length || 0,
   };
 
-  // Get recent projects (last 6 projects)
-  const recentProjects = projects?.slice(0, 6) || [];
+  // Get display projects based on filters
+  const displayProjects = hasActiveFilters ? filteredProjects : (projects?.slice(0, 6) || []);
 
   return (
     <div className="space-y-8 relative">
@@ -362,11 +455,16 @@ export default function DashboardIndex() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-blue-700">
-                  โครงการทั้งหมด
+                  โครงการทั้งหมด{hasActiveFilters ? ' (ที่กรอง)' : ''}
                 </p>
                 <p className="text-3xl font-bold text-blue-900">
                   {stats.totalProjects}
                 </p>
+                {hasActiveFilters && (
+                  <p className="text-xs text-blue-600 mt-1">
+                    จากทั้งหมด {projectStats?.total || projects?.length || 0} โครงการ
+                  </p>
+                )}
               </div>
               <div className="p-3 bg-blue-500 rounded-full">
                 <Target className="w-6 h-6 text-white" />
@@ -489,18 +587,28 @@ export default function DashboardIndex() {
         </Card>
       )}
 
-      {/* Recent Projects */}
-      <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+      {/* Project Filter - Visible to all users */}
+      <ProjectFilter
+        filters={filters}
+        onFiltersChange={setFilters}
+        strategicIssues={strategicIssues || []}
+        strategies={strategies || []}
+        isExpanded={isFilterExpanded}
+        onToggleExpanded={() => setIsFilterExpanded(!isFilterExpanded)}
+      />
+
+      {/* Projects Section */}
+  <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold text-slate-900">
-              โครงการล่าสุด
+              {hasActiveFilters ? `ผลการค้นหา (${displayProjects.length} โครงการ)` : 'โครงการล่าสุด'}
             </CardTitle>
             {isAuthenticated && (
               <Button
                 variant="outline"
                 className="group cursor-pointer bg-white hover:bg-slate-100 transition-colors"
-                onClick={() => handleNavigation("/dashboard/projects")}
+                onClick={() => handleNavigation("projects")}
               >
                 ดูทั้งหมด
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -509,13 +617,13 @@ export default function DashboardIndex() {
           </div>
         </CardHeader>
         <CardContent>
-          {recentProjects.length === 0 ? (
+          {displayProjects.length === 0 ? (
             <div className="text-center py-8 text-slate-500">
-              <p>ไม่พบโครงการ</p>
+              <p>{hasActiveFilters ? 'ไม่พบโครงการที่ตรงตามเงื่อนไข' : 'ไม่พบโครงการ'}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recentProjects.map((project) => (
+              {displayProjects.map((project: Project) => (
                 <ProjectCard
                   key={project.id}
                   project={project}
@@ -568,12 +676,12 @@ export default function DashboardIndex() {
                 return (
                   <Card
                     key={issue.id}
-                    className="bg-white/80 backdrop-blur-sm border-0 shadow-lg"
+                    className="bg-white/80 backdrop-blur-sm border-0 shadow-lg overflow-hidden"
                   >
                     <CardHeader>
                       <CardTitle className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                         <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full" />
-                        <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span>ประเด็นยุทธศาสตร์ที่ {issue.order || 1}</span>
                             <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
@@ -630,7 +738,7 @@ export default function DashboardIndex() {
                                     <p className="text-xs text-slate-500 truncate">
                                       {project.key_activities}
                                     </p>
-                                    <div className="flex flex-wrap gap-1 mt-1">
+                                    <div className="flex flex-wrap gap-1 mt-1 overflow-hidden">
                                       {strategyNames
                                         .slice(0, 2)
                                         .map((strategyName, index) => (

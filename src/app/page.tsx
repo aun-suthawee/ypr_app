@@ -4,7 +4,15 @@ import { useEffect, useState } from "react";
 import DashboardIndex from "@/components/dashboard-index";
 import GeometricBackground from "@/components/GeometricBackground";
 import { Button } from "@/components/ui/button";
-import { Target, ArrowRight, User, LogOut } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Target, ArrowRight, LogOut, Settings, ChevronDown, Home as HomeIcon } from "lucide-react";
 import {
   isAuthenticated,
   getUser,
@@ -95,38 +103,77 @@ export default function Home() {
                 <Target className="w-5 h-5 text-white" />
               </div>
               <h1 className="text-xl font-semibold text-slate-900">
-                YPR Dashboard
+                ระบบจัดการด้านการศึกษาจังหวัดยะลา
               </h1>
             </div>
             <div className="flex items-center space-x-3">
               {user ? (
-                // แสดงเมื่อเข้าสู่ระบบแล้ว
+                // แสดงเมื่อเข้าสู่ระบบแล้ว - Dropdown Menu
                 <>
-                  <div className="flex items-center space-x-2 text-slate-700">
-                    <User className="w-4 h-4" />
-                    <span className="text-sm font-medium">
-                      {user.title_prefix}
-                      {user.first_name} {user.last_name}
-                    </span>
-                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                      {user.role === "admin" ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}
-                    </span>
-                  </div>
-                  <Button 
-                    onClick={() => handleNavigation('/dashboard')}
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 flex items-center space-x-2 cursor-pointer"
-                  >
-                    <span>เข้าสู่ Dashboard</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={handleLogout}
-                    className="flex items-center space-x-2 text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>ออกจากระบบ</span>
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className="flex items-center space-x-2 p-2 hover:bg-slate-100 cursor-pointer rounded-lg"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-xs font-medium">
+                            {user.first_name?.charAt(0) || "U"}
+                          </span>
+                        </div>
+                        <div className="hidden sm:block text-left">
+                          <p className="text-sm font-medium text-slate-900 truncate max-w-[140px]">
+                            {user.title_prefix}{user.first_name} {user.last_name}
+                          </p>
+                          <p className="text-xs text-slate-600">
+                            {user.role === "admin" ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}
+                          </p>
+                        </div>
+                        <ChevronDown className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    
+                    <DropdownMenuContent align="end" className="w-56 bg-white">
+                      <DropdownMenuLabel>
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium text-slate-900">
+                            {user.title_prefix}{user.first_name} {user.last_name}
+                          </p>
+                          <p className="text-xs text-slate-600">
+                            {user.role === "admin" ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}
+                          </p>
+                        </div>
+                      </DropdownMenuLabel>
+                      
+                      <DropdownMenuSeparator />
+                      
+                      <DropdownMenuItem 
+                        onClick={() => handleNavigation("/dashboard")}
+                        className="cursor-pointer"
+                      >
+                        <HomeIcon className="mr-2 h-4 w-4" />
+                        <span>หน้า Dashboard</span>
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuItem 
+                        onClick={() => handleNavigation("/settings")}
+                        className="cursor-pointer"
+                      >
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>ตั้งค่า</span>
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuSeparator />
+                      
+                      <DropdownMenuItem 
+                        onClick={handleLogout}
+                        className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>ออกจากระบบ</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               ) : (
                 // แสดงเมื่อยังไม่ได้เข้าสู่ระบบ
@@ -150,10 +197,10 @@ export default function Home() {
       <main className="max-w-7xl mx-auto p-6 relative z-10">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-slate-900 mb-2">
-            ระบบจัดการยุทธศาสตร์
+            ระบบจัดการด้านการศึกษาจังหวัดยะลา
           </h2>
           <p className="text-slate-600">
-            ติดตามและจัดการประเด็นยุทธศาสตร์ กลยุทธ์ และโครงการขององค์กร
+            ติดตามและจัดการโครงการ ประเด็นยุทธศาสตร์ และสถิติการศึกษาของจังหวัดยะลา
           </p>
         </div>
 
@@ -163,8 +210,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-white/80 backdrop-blur-sm border-t border-slate-200 mt-16 relative z-10">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="text-center text-slate-600">
-            <p>Copyright &copy; ypr.yalapeo.go.th All right reserved.</p>
+            <div className="text-center text-slate-600">
+            <p>Copyright &copy; ypr.yalapeo.go.th ระบบจัดการด้านการศึกษาจังหวัดยะลา</p>
           </div>
         </div>
       </footer>

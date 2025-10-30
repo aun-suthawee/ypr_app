@@ -29,19 +29,39 @@ const globalLimiter = rateLimit({
 });
 
 // CORS configuration
+// Allow configuring multiple frontend URLs via FRONTEND_URLS (comma-separated) or FRONTEND_URL
+const frontendUrlsEnv = process.env.FRONTEND_URLS || process.env.FRONTEND_URL || '';
+const envOrigins = frontendUrlsEnv
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+const defaultProdOrigins = ['https://ypr.yalapeo.go.th', 'https://www.ypr.yalapeo.go.th'];
+const defaultDevOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+
+const normalize = (u) => (u ? u.replace(/\/$/, '') : u);
+
+const allowedOrigins = Array.from(
+  new Set([
+    ...envOrigins,
+    ...(process.env.NODE_ENV === 'production' ? defaultProdOrigins : [...defaultProdOrigins, ...defaultDevOrigins])
+  ])
+).map(normalize);
+
 const corsOptions = {
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:3000',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000'
-  ],
+  origin: (origin, callback) => {
+    // Allow requests without Origin (e.g., curl, server-to-server)
+    if (!origin) return callback(null, true);
+    const o = normalize(origin);
+    if (allowedOrigins.includes(o)) return callback(null, true);
+    return callback(new Error(`CORS blocked for origin: ${origin}`), false);
+  },
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
     'Origin',
-    'X-Requested-With', 
-    'Content-Type', 
+    'X-Requested-With',
+    'Content-Type',
     'Accept',
     'Authorization',
     'Cache-Control'
@@ -58,18 +78,12 @@ app.options('*', cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Security headers
+// Security headers (CORS is handled by the cors middleware above)
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
-  
-  // Additional CORS headers for preflight
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || 'http://localhost:3000');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control');
-  
+
   next();
 });
 
@@ -118,11 +132,12 @@ const startServer = async () => {
     await testConnection();
     
     app.listen(PORT, () => {
+      const publicBaseUrl = process.env.PUBLIC_BASE_URL || (process.env.NODE_ENV === 'production' ? 'https://ypr.yalapeo.go.th' : `http://localhost:${PORT}`);
       console.log(`🚀 YPR Backend API running on port ${PORT}`);
       console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
-      console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-      console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
+      console.log(`🌐 CORS allowed origins: ${allowedOrigins.join(', ')}`);
+      console.log(`🔗 Health check: ${publicBaseUrl}/health`);
+      console.log(`🔐 Auth endpoints: ${publicBaseUrl}/api/auth`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

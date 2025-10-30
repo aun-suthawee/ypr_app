@@ -48,6 +48,8 @@ export function ProjectForm({ project, onSubmit, onCancel, isLoading }: ProjectF
     province: 'ยะลา',
     strategic_issues: [] as string[],
     strategies: [] as string[],
+    strategic_issue_id: '', // สำหรับเลือกประเด็นยุทธศาสตร์เดียว
+    strategy_id: '', // สำหรับเลือกกลยุทธ์เดียว
     status: 'planning' as 'planning' | 'active' | 'completed' | 'cancelled',
   });
 
@@ -55,8 +57,8 @@ export function ProjectForm({ project, onSubmit, onCancel, isLoading }: ProjectF
   const [newDocumentLink, setNewDocumentLink] = useState({ name: '', url: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const { strategicIssues, loading: strategicIssuesLoading } = useStrategicIssues();
-  const { strategies, loading: strategiesLoading } = useStrategies();
+  const { strategicIssues } = useStrategicIssues();
+  const { strategies } = useStrategies();
 
   // Load project data if editing
   useEffect(() => {
@@ -80,6 +82,8 @@ export function ProjectForm({ project, onSubmit, onCancel, isLoading }: ProjectF
         province: project.province,
         strategic_issues: project.strategic_issues,
         strategies: project.strategies,
+        strategic_issue_id: project.strategic_issues?.[0] || '', // เลือกประเด็นแรก
+        strategy_id: project.strategies?.[0] || '', // เลือกกลยุทธ์แรก
         status: project.status,
       });
       setDocumentLinks(project.document_links || []);
@@ -102,8 +106,8 @@ export function ProjectForm({ project, onSubmit, onCancel, isLoading }: ProjectF
     if (!formData.responsible_email.trim()) newErrors.responsible_email = 'อีเมลเป็นข้อมูลที่จำเป็น';
     if (!formData.activity_location.trim()) newErrors.activity_location = 'สถานที่ดำเนินกิจกรรมเป็นข้อมูลที่จำเป็น';
     if (formData.districts.length === 0) newErrors.districts = 'กรุณาเลือกอำเภออย่างน้อย 1 อำเภอ';
-    if (formData.strategic_issues.length === 0) newErrors.strategic_issues = 'กรุณาเลือกประเด็นยุทธศาสตร์อย่างน้อย 1 ประเด็น';
-    if (formData.strategies.length === 0) newErrors.strategies = 'กรุณาเลือกกลยุทธ์อย่างน้อย 1 กลยุทธ์';
+    if (!formData.strategic_issue_id) newErrors.strategic_issue_id = 'กรุณาเลือกประเด็นยุทธศาสตร์';
+    if (!formData.strategy_id) newErrors.strategy_id = 'กรุณาเลือกกลยุทธ์';
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -141,6 +145,9 @@ export function ProjectForm({ project, onSubmit, onCancel, isLoading }: ProjectF
       ...formData,
       budget: formData.budget ? parseFloat(formData.budget) : undefined,
       document_links: documentLinks,
+      // แปลงจาก single selection เป็น array สำหรับ API
+      strategic_issues: formData.strategic_issue_id ? [formData.strategic_issue_id] : [],
+      strategies: formData.strategy_id ? [formData.strategy_id] : [],
     };
 
     await onSubmit(submitData);
@@ -170,15 +177,7 @@ export function ProjectForm({ project, onSubmit, onCancel, isLoading }: ProjectF
     label: district
   }));
 
-  const strategicIssueOptions = strategicIssues.map(issue => ({
-    value: issue.id,
-    label: issue.title
-  }));
 
-  const strategyOptions = strategies.map(strategy => ({
-    value: strategy.id,
-    label: strategy.name
-  }));
 
   return (
     <Card className="w-full max-w-4xl mx-auto" key={project?.id || "new"}>
@@ -519,43 +518,113 @@ export function ProjectForm({ project, onSubmit, onCancel, isLoading }: ProjectF
 
           {/* Strategic Issues & Strategies */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">
+            <h3 className="text-lg font-semibold text-slate-800">
               ความเชื่อมโยงเชิงยุทธศาสตร์
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label>ประเด็นยุทธศาสตร์ *</Label>
-                <MultiSelect
-                  options={strategicIssueOptions}
-                  value={formData.strategic_issues}
-                  onValueChange={(values: string[]) =>
-                    updateFormData("strategic_issues", values)
-                  }
-                  placeholder="เลือกประเด็นยุทธศาสตร์"
-                  loading={strategicIssuesLoading}
-                />
-                {errors.strategic_issues && (
+              <div className="space-y-3">
+                <label className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-indigo-400 to-blue-500 rounded-full"></div>
+                  ประเด็นยุทธศาสตร์ *
+                </label>
+                <Select
+                  value={formData.strategic_issue_id || ""}
+                  onValueChange={(value) => {
+                    updateFormData("strategic_issue_id", value);
+                    // ล้างการเลือกกลยุทธ์เมื่อเปลี่ยนประเด็นยุทธศาสตร์
+                    updateFormData("strategy_id", "");
+                  }}
+                >
+                  <SelectTrigger className="text-sm border-2 border-slate-200 hover:border-indigo-400 focus:border-indigo-500 rounded-lg transition-colors duration-200 bg-white">
+                    <SelectValue placeholder="เลือกประเด็นยุทธศาสตร์" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-lg border-2 border-slate-300 shadow-lg bg-white">
+                    {strategicIssues.map((issue) => (
+                      <SelectItem key={issue.id} value={issue.id}>
+                        <div className="w-full">
+                          <div className="block sm:hidden text-xs">
+                            <div className="truncate max-w-[180px] font-semibold text-indigo-700">
+                              ประเด็นที่ {issue.order}
+                            </div>
+                            <div className="truncate max-w-[350px] text-gray-600 mt-0.5">
+                              {issue.title}
+                            </div>
+                          </div>
+                          <div className="hidden sm:block">
+                            ประเด็นที่ {issue.order}: {issue.title}
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.strategic_issue_id && (
                   <p className="text-sm text-red-500 mt-1">
-                    {errors.strategic_issues}
+                    {errors.strategic_issue_id}
                   </p>
                 )}
               </div>
 
-              <div>
-                <Label>กลยุทธ์ *</Label>
-                <MultiSelect
-                  options={strategyOptions}
-                  value={formData.strategies}
-                  onValueChange={(values: string[]) =>
-                    updateFormData("strategies", values)
-                  }
-                  placeholder="เลือกกลยุทธ์"
-                  loading={strategiesLoading}
-                />
-                {errors.strategies && (
+              <div className="space-y-3">
+                <label className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-teal-400 to-green-500 rounded-full"></div>
+                  กลยุทธ์ *
+                </label>
+                <Select
+                  value={formData.strategy_id || ""}
+                  disabled={!formData.strategic_issue_id}
+                  onValueChange={(value) => updateFormData("strategy_id", value)}
+                >
+                  <SelectTrigger 
+                    className={`text-sm border-2 border-slate-200 hover:border-teal-400 focus:border-teal-500 rounded-lg transition-colors duration-200 bg-white ${
+                      !formData.strategic_issue_id
+                        ? "opacity-50 cursor-not-allowed bg-gray-50"
+                        : ""
+                    }`}
+                  >
+                    <SelectValue
+                      placeholder={
+                        !formData.strategic_issue_id
+                          ? "เลือกประเด็นยุทธศาสตร์ก่อน"
+                          : "เลือกกลยุทธ์"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-lg border-2 border-slate-300 shadow-lg bg-white">
+                    {strategies
+                      .filter(
+                        (strategy) =>
+                          !formData.strategic_issue_id ||
+                          strategy.strategic_issue_id === formData.strategic_issue_id
+                      )
+                      .map((strategy) => (
+                        <SelectItem key={strategy.id} value={strategy.id}>
+                          <div className="w-full">
+                            <div className="block sm:hidden text-xs">
+                              <div className="truncate max-w-[180px] font-semibold text-teal-700">
+                                ประเด็นที่{" "}
+                                {strategy.strategic_issue?.order || "N/A"}{" "}
+                                กลยุทธ์ที่ {strategy.order}
+                              </div>
+                              <div className="truncate max-w-[350px] text-gray-600 mt-0.5">
+                                {strategy.name}
+                              </div>
+                            </div>
+                            <div className="hidden sm:block">
+                              ประเด็นที่{" "}
+                              {strategy.strategic_issue?.order || "N/A"}:{" "}
+                              กลยุทธ์ที่ {strategy.order} -{" "}
+                              <span className="truncate">{strategy.name}</span>
+                            </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                {errors.strategy_id && (
                   <p className="text-sm text-red-500 mt-1">
-                    {errors.strategies}
+                    {errors.strategy_id}
                   </p>
                 )}
               </div>

@@ -116,7 +116,7 @@ export function UserForm({
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">ข้อมูลพื้นฐาน</h3>
+            <h3 className="text-lg font-semibold text-slate-900">ข้อมูลพื้นฐาน</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -147,7 +147,7 @@ export function UserForm({
                       <SelectItem
                         key={role.value}
                         value={role.value}
-                        className="cursor-pointer hover:bg-gray-200"
+                        className="cursor-pointer hover:bg-blue-50"
                       >
                         {role.label}
                       </SelectItem>
@@ -175,7 +175,7 @@ export function UserForm({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-slate-100 text-slate-600 hover:text-slate-900 cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -194,7 +194,7 @@ export function UserForm({
 
           {/* Personal Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">ข้อมูลส่วนตัว</h3>
+            <h3 className="text-lg font-semibold text-slate-900">ข้อมูลส่วนตัว</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -285,7 +285,7 @@ export function UserForm({
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="hover:bg-gray-100 cursor-pointer"
+              className="hover:bg-slate-50 hover:border-slate-400 cursor-pointer"
             >
               ยกเลิก
             </Button>

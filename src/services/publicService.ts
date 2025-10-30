@@ -1,23 +1,10 @@
-import axios from 'axios';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-
-// Create API instance WITHOUT authentication headers
-const api = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// No authentication interceptors for public service
+import { http } from '@/lib/http';
 
 export const publicService = {
   // Get strategic issues without authentication
   async getStrategicIssues(filters?: Record<string, unknown>) {
     try {
-      const response = await api.get('/strategic-issues/public', { params: filters });
+  const response = await http.get('/strategic-issues/public', { params: filters });
       return response.data;
     } catch (error) {
       console.error('Error fetching public strategic issues:', error);
@@ -28,7 +15,7 @@ export const publicService = {
   // Get strategic issues stats without authentication
   async getStrategicIssueStats() {
     try {
-      const response = await api.get('/strategic-issues/public/stats');
+  const response = await http.get('/strategic-issues/public/stats');
       return response.data;
     } catch (error) {
       console.error('Error fetching public strategic issues stats:', error);
@@ -39,7 +26,7 @@ export const publicService = {
   // Get strategies without authentication
   async getStrategies(filters?: Record<string, unknown>) {
     try {
-      const response = await api.get('/strategies/public', { params: filters });
+  const response = await http.get('/strategies/public', { params: filters });
       return response.data;
     } catch (error) {
       console.error('Error fetching public strategies:', error);
@@ -50,7 +37,7 @@ export const publicService = {
   // Get strategies stats without authentication
   async getStrategyStats() {
     try {
-      const response = await api.get('/strategies/public/stats');
+  const response = await http.get('/strategies/public/stats');
       return response.data;
     } catch (error) {
       console.error('Error fetching public strategies stats:', error);
@@ -61,7 +48,7 @@ export const publicService = {
   // Get projects without authentication
   async getProjects(filters?: Record<string, unknown>) {
     try {
-      const response = await api.get('/projects/public', { params: filters });
+  const response = await http.get('/projects/public', { params: filters });
       return response.data;
     } catch (error) {
       console.error('Error fetching public projects:', error);
@@ -72,7 +59,7 @@ export const publicService = {
   // Get projects stats without authentication
   async getProjectStats() {
     try {
-      const response = await api.get('/projects/public/stats');
+  const response = await http.get('/projects/public/stats');
       return response.data;
     } catch (error) {
       console.error('Error fetching public projects stats:', error);

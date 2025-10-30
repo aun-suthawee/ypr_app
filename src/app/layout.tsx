@@ -16,8 +16,8 @@ const prompt = Prompt({
 });
 
 export const metadata: Metadata = {
-  title: "YPR Dashboard - ระบบจัดการยุทธศาสตร์",
-  description: "ระบบจัดการประเด็นยุทธศาสตร์ กลยุทธ์ และโครงการ",
+  title: "ระบบจัดการด้านการศึกษาจังหวัดยะลา",
+  description: "ระบบจัดการด้านการศึกษาจังหวัดยะลา - แพลตฟอร์มสำหรับจัดการโครงการ ประเด็นยุทธศาสตร์ และสถิติการศึกษา",
 };
 
 export default function RootLayout({

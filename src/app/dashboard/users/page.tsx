@@ -265,15 +265,15 @@ export default function UsersPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold">จัดการผู้ใช้</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-3xl font-bold text-slate-900">จัดการผู้ใช้</h1>
+            <p className="text-slate-700 font-medium">
               จัดการข้อมูลผู้ใช้และสิทธิ์การเข้าถึง
             </p>
           </div>
           {isAdmin && (
             <Button
               onClick={() => setShowCreateForm(true)}
-              className="cursor-pointer hover:bg-gray-200"
+              className="cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-semibold shadow-lg"
             >
               <Plus className="w-4 h-4 mr-2" />
               เพิ่มผู้ใช้ใหม่
@@ -390,7 +390,7 @@ export default function UsersPage() {
               <CardContent className="space-y-4">
                 {/* Search Bar */}
                 <div className="relative">
-                  <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-600" />
                   <Input
                     placeholder="ค้นหาผู้ใช้ด้วยชื่อ, อีเมล, ตำแหน่ง..."
                     value={searchTerm}
@@ -401,7 +401,7 @@ export default function UsersPage() {
                   {searchTerm && (
                     <button
                       onClick={() => setSearchTerm("")}
-                      className="cursor-pointer absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="cursor-pointer absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-600 hover:text-slate-800"
                     >
                       ✕
                     </button>
@@ -411,7 +411,7 @@ export default function UsersPage() {
                 {/* Filters Row */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-semibold text-slate-800">
                       บทบาท
                     </label>
                     <Select value={roleFilter} onValueChange={setRoleFilter}>
@@ -429,7 +429,7 @@ export default function UsersPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-semibold text-slate-800">
                       แผนก
                     </label>
                     <Input
@@ -443,7 +443,7 @@ export default function UsersPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-semibold text-slate-800">
                       สถานะ
                     </label>
                     <Select
@@ -485,11 +485,11 @@ export default function UsersPage() {
             {users.length === 0 ? (
               <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
                 <CardContent className="text-center py-16">
-                  <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  <Users className="w-16 h-16 mx-auto mb-4 text-slate-500" />
+                  <h3 className="text-xl font-semibold text-slate-800 mb-2">
                     ไม่พบข้อมูลผู้ใช้
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-slate-700 mb-6">
                     ไม่มีผู้ใช้ที่ตรงกับเงื่อนไขการค้นหา
                   </p>
                   <Button

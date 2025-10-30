@@ -130,13 +130,13 @@ export default function ProjectsPage() {
     <div className="flex items-center justify-center py-12">
       <div className="text-center">
         <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-slate-800 mb-2">
+        <h3 className="text-lg font-semibold text-slate-900 mb-2">
           เกิดข้อผิดพลาด
         </h3>
-        <p className="text-slate-600 mb-4">{error}</p>
+        <p className="text-slate-700 font-medium mb-4">{error}</p>
         <Button
           onClick={refresh}
-          className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
+          className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer font-semibold"
         >
           <RefreshCw className="w-4 h-4 mr-2" />
           ลองใหม่
@@ -222,10 +222,10 @@ export default function ProjectsPage() {
             {filteredProjects.length === 0 ? (
               <div className="text-center py-12 px-4">
                 <FolderOpen className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-base sm:text-lg font-semibold text-gray-600 mb-2">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-700 mb-2">
                   {searchTerm ? "ไม่พบโครงการที่ค้นหา" : "ยังไม่มีโครงการ"}
                 </h3>
-                <p className="text-sm sm:text-base text-gray-500 mb-4">
+                <p className="text-sm sm:text-base text-slate-600 font-medium mb-4">
                   {searchTerm
                     ? "ลองค้นหาด้วยคำอื่น"
                     : "เริ่มต้นด้วยการสร้างโครงการแรกของคุณ"}

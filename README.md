@@ -1,4 +1,4 @@
-# YPR Dashboard - ระบบจัดการยุทธศาสตร์
+# ระบบจัดการด้านการศึกษาจังหวัดยะลา
 
 A modern, responsive dashboard for strategic planning and project management built with Next.js, TailwindCSS, and Shadcn UI.
 
@@ -35,12 +35,21 @@ A modern, responsive dashboard for strategic planning and project management bui
 - **Strategic Issues Management** - จัดการประเด็นยุทธศาสตร์ขององค์กร
 - **Strategy Tracking** - ติดตามกลยุทธ์และแผนงาน
 - **Project Management** - จัดการโครงการและความก้าวหน้า
+- **Advanced Project Filtering & Search** - ระบบกรองและค้นหาโครงการขั้นสูง
+  - ค้นหาตามชื่อโครงการ, กิจกรรมหลัก, ผู้รับผิดชอบ
+  - กรองตามงบประมาณ (ช่วงราคา)
+  - กรองตามประเภทโครงการ (ใหม่/ต่อเนื่อง)
+  - กรองตามสถานะ (วางแผน/ดำเนินการ/เสร็จสิ้น/ยกเลิก)
+  - กรองตามช่วงวันที่ (วันเริ่ม-วันสิ้นสุด)
+  - กรองตามอำเภอที่ดำเนินการ
+  - กรองตามประเด็นยุทธศาสตร์และกลยุทธ์
 - **User Management** - จัดการผู้ใช้งานในระบบ
 - **Authentication System** - ระบบเข้าสู่ระบบและจัดการสิทธิ์
 - **Responsive Design** - ใช้งานได้ทุกอุปกรณ์
 - **Modern UI** - ออกแบบด้วย Clean และ Minimal aesthetic
 - **Loading States** - UX loading states สำหรับการนำทางและการโหลดข้อมูล
 - **Error Handling** - ระบบจัดการข้อผิดพลาดและแสดงข้อความเตือน
+- **Real-time Filter Statistics** - แสดงสถิติตามข้อมูลที่กรองแล้ว
 
 ## Technology Stack
 
@@ -121,6 +130,7 @@ ypr_app/
 │   │   ├── users/                   # User management components
 │   │   ├── dashboard-layout.tsx     # Dashboard layout wrapper
 │   │   ├── dashboard-index.tsx      # Dashboard homepage content
+│   │   ├── project-filter.tsx       # Advanced project filtering component
 │   │   ├── custom-badges.tsx        # Custom badge components
 │   │   ├── loading-skeleton.tsx     # Loading skeleton components
 │   │   ├── redirect-loading.tsx     # Navigation loading overlay
@@ -392,6 +402,42 @@ npx shadcn@latest add [component-name]
 - Error handling with try-catch and user feedback
 - Loading states for better UX
 
+### Project Filtering System
+The advanced filtering system supports multiple criteria:
+
+#### Filter Types
+- **Text Search**: ค้นหาใน name, key_activities, responsible person
+- **Budget Range**: กรองตามช่วงงบประมาณ (ต่ำสุด-สูงสุด)
+- **Project Type**: โครงการใหม่ หรือ โครงการต่อเนื่อง
+- **Status**: วางแผน, ดำเนินการ, เสร็จสิ้น, ยกเลิก
+- **Date Range**: ช่วงวันที่เริ่มและสิ้นสุดโครงการ
+- **Districts**: กรองตามอำเภอที่ดำเนินการ
+- **Strategic Issues**: ประเด็นยุทธศาสตร์ที่เกี่ยวข้อง
+- **Strategies**: กลยุทธ์ที่เกี่ยวข้อง
+
+#### Filter Features
+- **Expandable Interface**: ซ่อน/แสดงตัวกรองขั้นสูง
+- **Multi-select Support**: เลือกหลายค่าสำหรับ districts, strategic issues, strategies
+- **Real-time Statistics**: อัปเดตสถิติตามผลการกรอง
+- **Filter Summary**: แสดงสรุปตัวกรองที่ใช้งาน
+- **Clear All Filters**: ล้างตัวกรองทั้งหมดในครั้งเดียว
+
+#### Implementation
+```typescript
+interface ProjectFilters {
+  search: string;
+  minBudget: string;
+  maxBudget: string;
+  projectType: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+  districts: string[];
+  strategicIssueIds: string[];
+  strategyIds: string[];
+}
+```
+
 ## Database
 
 ### MySQL Tables
@@ -422,26 +468,41 @@ npx shadcn@latest add [component-name]
 
 ## Current Status
 
-### Completed Features
+### Completed Features ✅
 - Authentication system with JWT
 - Dashboard layout and navigation
 - Strategic Issues management
 - Strategies management  
 - Projects management (basic CRUD)
+- **Advanced Project Filtering & Search System**
+  - Multi-criteria filtering (budget, type, status, dates, districts)
+  - Strategic issues and strategies filtering
+  - Real-time search with instant results
+  - Expandable filter interface
+  - Filter summary and statistics
 - User management
 - Responsive design
 - Loading states and error handling
 - Role-based access control
 
-### In Progress
+### In Progress 🚧
 - Project form component (temporarily disabled)
-- Enhanced filtering and search
+- Enhanced project detail views
+- Data export functionality
+
+### Known Issues 🐛
+- Project form component disabled due to build issues
+- Some prerender errors during static export (resolved)
 
 ## Future Enhancements
 
 - [ ] Advanced project analytics and reporting
 - [ ] Real-time collaboration features
-- [ ] Advanced filtering and search
+- [ ] **Enhanced filtering features:**
+  - [ ] Save and load custom filter presets
+  - [ ] Export filtered data to Excel/CSV
+  - [ ] Advanced date range picker with presets
+  - [ ] Geographic mapping integration
 - [ ] Bulk operations for data management
 - [ ] Email notifications and alerts
 - [ ] Multi-language support (TH/EN)

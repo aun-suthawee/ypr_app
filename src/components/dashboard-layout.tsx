@@ -4,6 +4,14 @@ import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Footer from "@/components/footer";
 import { getUser, logout } from "@/lib/auth";
 import { NavigationLoading } from "@/components/redirect-loading";
@@ -17,6 +25,8 @@ import {
   ChevronRight,
   Home,
   LogOut,
+  Settings,
+  ChevronDown,
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -143,27 +153,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       >
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-slate-200">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Target className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between p-4 sm:p-5 md:p-6 border-b border-slate-200">
+            <div className="flex items-center space-x-2 min-w-0 flex-1">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Target className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              <h1 className="text-lg font-semibold text-slate-900">
+              <h1 className="text-base sm:text-lg font-semibold text-slate-900 truncate">
                 YPR Dashboard
               </h1>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              className="lg:hidden text-slate-700 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
+              className="lg:hidden text-slate-700 hover:text-slate-900 hover:bg-slate-100 cursor-pointer p-1.5 sm:p-2 flex-shrink-0"
               onClick={() => setSidebarOpen(false)}
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-3 sm:p-4 space-y-1.5 sm:space-y-2">
             {filteredNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -173,32 +183,32 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   key={item.id}
                   variant={isActive ? "default" : "ghost"}
                   className={cn(
-                    "w-full justify-start text-left font-medium transition-all duration-200 cursor-pointer",
+                    "w-full justify-start text-left font-medium transition-all duration-200 cursor-pointer px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base",
                     isActive
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
-                      : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-700 text-white shadow-lg font-semibold"
+                      : "text-slate-800 hover:text-slate-900 hover:bg-blue-50 hover:border-blue-200"
                   )}
                   onClick={() => handleNavigation(item.href)}
                 >
-                  <Icon className="w-5 h-5 mr-3" />
-                  {item.name}
-                  {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0" />
+                  <span className="truncate">{item.name}</span>
+                  {isActive && <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-auto flex-shrink-0" />}
                 </Button>
               );
             })}
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-200 space-y-3">
+          <div className="p-3 sm:p-4 border-t border-slate-200 space-y-2 sm:space-y-3">
             <Button
               variant="outline"
-              className="w-full justify-start text-left font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 border-slate-300 cursor-pointer"
+              className="w-full justify-start text-left font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 border-slate-300 cursor-pointer px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base"
               onClick={() => handleNavigation("/")}
             >
-              <Home className="w-4 h-4 mr-3" />
-              กลับหน้าแรก
+              <Home className="w-4 h-4 mr-2 sm:mr-3 flex-shrink-0" />
+              <span className="truncate">กลับหน้าแรก</span>
             </Button>
-            <div className="text-sm text-slate-500 text-center">
+            <div className="text-xs sm:text-sm text-slate-500 text-center px-2">
               Strategic Planning System
             </div>
           </div>
@@ -207,57 +217,103 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main content */}
       <div className="lg:ml-64">
-        {/* Top bar */}
+        {/* Header */}
         <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-sm border-b border-slate-200">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-3 sm:py-4">
+            {/* Left section */}
+            <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 flex-1 min-w-0">
               <Button
                 variant="ghost"
                 size="sm"
-                className="lg:hidden text-slate-700 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
+                className="lg:hidden text-slate-700 hover:text-slate-900 hover:bg-slate-100 cursor-pointer p-1.5 sm:p-2 flex-shrink-0"
                 onClick={() => setSidebarOpen(true)}
               >
-                <Menu className="w-5 h-5" />
+                <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
-              <div>
-                <h2 className="text-xl font-semibold text-slate-900">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-base sm:text-lg md:text-xl font-semibold text-slate-900 truncate">
                   {navigation.find((item) => item.id === activeTab)?.name ||
                     "Dashboard"}
                 </h2>
-                <p className="text-sm text-slate-600">
+                <p className="text-xs sm:text-sm text-slate-600 hidden md:block truncate">
                   จัดการและติดตามความก้าวหน้าของโครงการ
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-medium">
-                    {currentUser?.first_name?.charAt(0) || "U"}
-                  </span>
-                </div>
-                <div className="hidden sm:block">
-                  <p className="text-sm font-medium text-slate-900">
-                    {currentUser
-                      ? `${currentUser.first_name} ${currentUser.last_name}`
-                      : "ผู้ใช้"}
-                  </p>
-                  <p className="text-xs text-slate-600">
-                    {isAdmin ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}
-                  </p>
-                </div>
-              </div>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="flex items-center space-x-2 text-slate-700 hover:text-red-600 hover:bg-red-50 cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">ออกจากระบบ</span>
-              </Button>
+            {/* Right section */}
+            <div className="flex items-center space-x-1.5 sm:space-x-2 md:space-x-3 flex-shrink-0">
+              {/* User dropdown menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="flex items-center space-x-1.5 sm:space-x-2 p-1.5 sm:p-2 hover:bg-slate-100 cursor-pointer rounded-lg"
+                  >
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-xs font-medium">
+                        {currentUser?.first_name?.charAt(0) || "U"}
+                      </span>
+                    </div>
+                    {/* Desktop: Full name and role */}
+                    <div className="hidden lg:block min-w-0 text-left">
+                      <p className="text-sm font-medium text-slate-900 truncate max-w-[120px] xl:max-w-[140px]">
+                        {currentUser
+                          ? `${currentUser.first_name} ${currentUser.last_name}`
+                          : "ผู้ใช้"}
+                      </p>
+                      <p className="text-xs text-slate-600">
+                        {isAdmin ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}
+                      </p>
+                    </div>
+                    {/* Tablet: First name only */}
+                    <div className="hidden sm:block lg:hidden min-w-0 text-left">
+                      <p className="text-sm font-medium text-slate-900 truncate max-w-[70px]">
+                        {currentUser?.first_name || "ผู้ใช้"}
+                      </p>
+                      <p className="text-xs text-slate-600">
+                        {isAdmin ? "Admin" : "User"}
+                      </p>
+                    </div>
+                    <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-slate-500 flex-shrink-0" />
+                  </Button>
+                </DropdownMenuTrigger>
+                
+                <DropdownMenuContent align="end" className="w-56 bg-white">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium text-slate-900">
+                        {currentUser
+                          ? `${currentUser.first_name} ${currentUser.last_name}`
+                          : "ผู้ใช้"}
+                      </p>
+                      <p className="text-xs text-slate-600">
+                        {isAdmin ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuItem 
+                    onClick={() => handleNavigation("/settings")}
+                    className="cursor-pointer"
+                  >
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>ตั้งค่า</span>
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuItem 
+                    onClick={handleLogout}
+                    className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>ออกจากระบบ</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

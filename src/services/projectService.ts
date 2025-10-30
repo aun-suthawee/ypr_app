@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { http } from '@/lib/http';
 import { 
   Project, 
   ProjectFilters, 
@@ -9,52 +9,13 @@ import {
   UpdateProjectRequest 
 } from '@/types/project';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-
-const api = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request interceptor to add auth token
-api.interceptors.request.use(
-  (config) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('ypr_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor to handle errors
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('ypr_token');
-        localStorage.removeItem('ypr_user');
-        // Don't auto-redirect, let components handle this
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+// Note: auth header injection and base URL normalization handled by http interceptor
 
 export const projectService = {
   // Get all projects with filters
   async getProjects(filters?: ProjectFilters): Promise<ProjectsResponse> {
     try {
-      const response = await api.get('/projects', { params: filters });
+  const response = await http.get('/projects', { params: filters });
       return response.data;
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -65,7 +26,7 @@ export const projectService = {
   // Get project by ID
   async getProjectById(id: string): Promise<ProjectResponse> {
     try {
-      const response = await api.get(`/projects/${id}`);
+  const response = await http.get(`/projects/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching project:', error);
@@ -76,7 +37,7 @@ export const projectService = {
   // Create new project
   async createProject(projectData: CreateProjectRequest): Promise<ProjectResponse> {
     try {
-      const response = await api.post('/projects', projectData);
+  const response = await http.post('/projects', projectData);
       return response.data;
     } catch (error) {
       console.error('Error creating project:', error);
@@ -87,7 +48,7 @@ export const projectService = {
   // Update project
   async updateProject(id: string, projectData: UpdateProjectRequest): Promise<ProjectResponse> {
     try {
-      const response = await api.put(`/projects/${id}`, projectData);
+  const response = await http.put(`/projects/${id}`, projectData);
       return response.data;
     } catch (error) {
       console.error('Error updating project:', error);
@@ -98,7 +59,7 @@ export const projectService = {
   // Delete project
   async deleteProject(id: string): Promise<{ success: boolean; message: string }> {
     try {
-      const response = await api.delete(`/projects/${id}`);
+  const response = await http.delete(`/projects/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error deleting project:', error);
@@ -109,7 +70,7 @@ export const projectService = {
   // Get project statistics
   async getProjectStats(): Promise<ProjectStatsResponse> {
     try {
-      const response = await api.get('/projects/stats');
+  const response = await http.get('/projects/stats');
       return response.data;
     } catch (error) {
       console.error('Error fetching project stats:', error);
@@ -121,7 +82,7 @@ export const projectService = {
   // Get all projects without authentication
   async getPublicProjects(filters?: ProjectFilters): Promise<ProjectsResponse> {
     try {
-      const response = await api.get('/projects/public', { params: filters });
+  const response = await http.get('/projects/public', { params: filters });
       return response.data;
     } catch (error) {
       console.error('Error fetching public projects:', error);
@@ -132,7 +93,7 @@ export const projectService = {
   // Get project statistics without authentication
   async getPublicProjectStats(): Promise<ProjectStatsResponse> {
     try {
-      const response = await api.get('/projects/public/stats');
+  const response = await http.get('/projects/public/stats');
       return response.data;
     } catch (error) {
       console.error('Error fetching public project stats:', error);

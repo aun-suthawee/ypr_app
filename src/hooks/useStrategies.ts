@@ -1,20 +1,20 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { 
-  getStrategies, 
-  createStrategy, 
-  updateStrategy, 
+import {
+  getStrategies,
+  createStrategy,
+  updateStrategy,
   deleteStrategy,
-  getStrategyStats 
+  getStrategyStats,
 } from '@/lib/strategies';
 import { publicService } from '@/services/publicService';
 import { isAuthenticated } from '@/lib/auth';
-import type { 
-  Strategy, 
-  CreateStrategyData, 
+import type {
+  Strategy,
+  CreateStrategyData,
   UpdateStrategyData,
-  StrategyStats
+  StrategyStats,
 } from '@/types/strategies';
 
 export function useStrategies() {
@@ -27,29 +27,28 @@ export function useStrategies() {
     try {
       setLoading(true);
       setError(null);
-      
-      // Use public service if not authenticated
+
       if (isAuthenticated()) {
-        // Load strategies and stats in parallel
         const [strategiesResponse, statsResponse] = await Promise.all([
           getStrategies(),
-          getStrategyStats()
+          getStrategyStats(),
         ]);
-        
+
         setStrategies(strategiesResponse.data.strategies);
         setStats(statsResponse.data.stats);
       } else {
-        // Load public data
         const [strategiesResponse, statsResponse] = await Promise.all([
           publicService.getStrategies(),
-          publicService.getStrategyStats()
+          publicService.getStrategyStats(),
         ]);
-        
+
         setStrategies(strategiesResponse.data.strategies);
         setStats(statsResponse.data.stats);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการโหลดข้อมูล');
+      setError(
+        err instanceof Error ? err.message : '\u0e40\u0e01\u0e34\u0e14\u0e02\u0e49\u0e2d\u0e1c\u0e34\u0e14\u0e1e\u0e25\u0e32\u0e14\u0e43\u0e19\u0e01\u0e32\u0e23\u0e42\u0e2b\u0e25\u0e14\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25'
+      );
     } finally {
       setLoading(false);
     }
@@ -99,6 +98,6 @@ export function useStrategies() {
     create,
     update,
     remove,
-    refresh: loadStrategies
+    refresh: loadStrategies,
   };
 }
